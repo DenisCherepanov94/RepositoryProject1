@@ -1,23 +1,26 @@
 package ru.cherepanov.FirstProjectCherepanov.service;
 
 import lombok.Builder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import ru.cherepanov.FirstProjectCherepanov.dto.AuthRequest;
 import ru.cherepanov.FirstProjectCherepanov.dto.AuthResponse;
 import ru.cherepanov.FirstProjectCherepanov.entity.Role;
 import ru.cherepanov.FirstProjectCherepanov.entity.User;
 import ru.cherepanov.FirstProjectCherepanov.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 import ru.cherepanov.FirstProjectCherepanov.util.RegisterUserException;
 import ru.cherepanov.FirstProjectCherepanov.util.UserAlreadyExistsException;
 
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Сервис сущности Пользователь
+ */
 @Builder
 @Service
 @RequiredArgsConstructor
@@ -25,19 +28,27 @@ public class UserService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+    private final JwtServicesImpl jwtServicesImpl;
     private final AuthenticationManager authenticationManager;
     private final UserDetailServices userDetailsService;
 
-
+    /**
+     * Получение всех пользователей
+     */
     public List<User> getAllUsers() {
         return repository.findAll();
     }
 
+    /**
+     * Удаление пользователя
+     */
     public void deleteById(UUID id) {
         repository.deleteById(id);
     }
 
+    /**
+     * Регистрация пользователя
+     */
     public AuthResponse register(AuthRequest request) {
         if (repository.existsByUsername(request.getUsername())) {
             throw new UserAlreadyExistsException();
@@ -51,7 +62,7 @@ public class UserService {
         try {
             repository.save(user);
             var userDetails = userDetailsService.loadUserByUsername(request.getUsername());
-            var jwtToken = jwtService.generateToken(userDetails);
+            var jwtToken = jwtServicesImpl.generateToken(userDetails);
             return AuthResponse.builder()
                     .token(jwtToken)
                     .build();
@@ -60,6 +71,9 @@ public class UserService {
         }
     }
 
+    /**
+     * Авторизация пользователя
+     */
     public AuthResponse authenticate(AuthRequest request) {
         try {
             authenticationManager.authenticate(
@@ -72,12 +86,12 @@ public class UserService {
             var user = userDetailsService.loadUserByUsername(request.getUsername());
 
 
-            var jwtToken = jwtService.generateToken(user);
+            var jwtToken = jwtServicesImpl.generateToken(user);
             return AuthResponse.builder()
                     .token(jwtToken)
                     .build();
         } catch (Exception e) {
-            throw new BadCredentialsException(null);//todo
+            throw new BadCredentialsException(null);
         }
     }
 }

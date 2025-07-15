@@ -7,6 +7,9 @@ import ru.cherepanov.FirstProjectCherepanov.entity.User;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Подключение репозитория для сущности Пользователь
+ */
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUsername(String username);

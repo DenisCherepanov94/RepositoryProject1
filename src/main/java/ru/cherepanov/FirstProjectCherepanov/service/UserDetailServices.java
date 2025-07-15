@@ -13,12 +13,18 @@ import ru.cherepanov.FirstProjectCherepanov.util.UserNotFoundException;
 
 import java.util.Optional;
 
+/**
+ * Сервис UserDetail
+ */
 @Service
 @Builder
 @RequiredArgsConstructor
 public class UserDetailServices implements UserDetailsService {
     private final UserRepository userRepository;
 
+    /**
+     * Поиск пользователя в бд
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> byUsername = userRepository.findByUsername(username);

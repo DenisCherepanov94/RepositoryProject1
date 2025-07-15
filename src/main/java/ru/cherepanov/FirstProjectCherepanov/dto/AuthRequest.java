@@ -1,19 +1,27 @@
 package ru.cherepanov.FirstProjectCherepanov.dto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.hibernate.validator.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+/**
+ * ДТО аутентификации полученное от пользователя
+ */
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class AuthRequest {
-
+    /**
+     * Имя пользователя
+     */
     @NotEmpty(message = "Поле не должно быть пустым")
     private String username;
+    /**
+     * Пароль пользователя
+     */
     @NotEmpty(message = "Поле не должно быть пустым")
     private String password;
 }

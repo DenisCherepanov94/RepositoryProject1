@@ -18,16 +18,20 @@ import ru.cherepanov.FirstProjectCherepanov.util.OrderNotFoundException;
 import ru.cherepanov.FirstProjectCherepanov.util.UserNotFoundException;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
+/**
+ * Сервис сущности Заказ
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Создание заказа
+     */
     public OrderResponse createOrder(OrderRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -46,6 +50,9 @@ public class OrderService {
         return mapToOrderResponse(order);
     }
 
+    /**
+     * Получение всех заказов пользователя
+     */
     public Page<OrderResponse> getUserOrders(Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -53,15 +60,21 @@ public class OrderService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
-        return orderRepository.findByUser(user,pageable)
+        return orderRepository.findByUser(user, pageable)
                 .map(this::mapToOrderResponse);
     }
 
+    /**
+     * Получение всех существующих заказов(для Админа)
+     */
     public Page<OrderResponse> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable)
                 .map(this::mapToOrderResponse);
     }
 
+    /**
+     * Редактирование заказа(Для Админа)
+     */
     public OrderResponse updateOrderStatus(UUID id, OrderStatus status) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(OrderNotFoundException::new);
@@ -70,6 +83,9 @@ public class OrderService {
         return mapToOrderResponse(order);
     }
 
+    /**
+     * Удаление заказа
+     */
     public void deleteOrder(UUID id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -88,6 +104,9 @@ public class OrderService {
         orderRepository.delete(order);
     }
 
+    /**
+     * Сформированный заказ для ответа ДТО
+     */
     private OrderResponse mapToOrderResponse(Order order) {
         return OrderResponse.builder()
                 .id(order.getId())

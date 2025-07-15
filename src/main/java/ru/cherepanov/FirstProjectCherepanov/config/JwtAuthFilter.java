@@ -1,6 +1,5 @@
 package ru.cherepanov.FirstProjectCherepanov.config;
 
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,16 +12,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.cherepanov.FirstProjectCherepanov.service.JwtService;
+import ru.cherepanov.FirstProjectCherepanov.service.JwtServicesImpl;
 import ru.cherepanov.FirstProjectCherepanov.service.UserDetailServices;
 
 import java.io.IOException;
 
+/**
+ * Проверка токенов
+ */
 @Component
 @RequiredArgsConstructor
 
 public class JwtAuthFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final JwtServicesImpl jwtServicesImpl;
     private final UserDetailServices userDetailsService;
 
 
@@ -42,11 +44,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         jwt = authHeader.substring(7);
-        username = jwtService.extractUsername(jwt);
+        username = jwtServicesImpl.extractUsername(jwt);
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtService.isTokenValid(jwt, userDetails)) {
+            if (jwtServicesImpl.isTokenValid(jwt, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,

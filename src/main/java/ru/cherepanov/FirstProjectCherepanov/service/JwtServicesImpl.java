@@ -15,8 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Сервис для создания токенов
+ */
 @Service
-public class JwtService {
+public class JwtServicesImpl implements JwtServices {
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970";
 
     public String extractUsername(String token) {
@@ -28,10 +31,16 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * Создание токена на основе пользователя
+     */
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
+    /**
+     * Создание токена и его времени жизни с секретом
+     */
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts
                 .builder()
@@ -43,21 +52,33 @@ public class JwtService {
                 .compact();
     }
 
+    /**
+     * Проверка корректности токена
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
+    /**
+     * Проверка на жизнь токена
+     */
     private boolean isTokenExpired(String token) {
 
 
         return extractExpiration(token).before(new Date());
     }
 
+    /**
+     * Извлечение даты истечения срока из токена
+     */
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    /**
+     * Извлечение данных из токена
+     */
     private Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
@@ -67,6 +88,9 @@ public class JwtService {
                 .getBody();
     }
 
+    /**
+     * Декодирование секрета
+     */
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);

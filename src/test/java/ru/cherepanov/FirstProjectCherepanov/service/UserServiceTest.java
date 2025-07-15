@@ -33,7 +33,7 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private JwtService jwtService;
+    private JwtServicesImpl jwtServicesImpl;
 
     @Mock
     private AuthenticationManager authenticationManager;
@@ -63,7 +63,7 @@ class UserServiceTest {
         // Arrange
         when(passwordEncoder.encode(anyString())).thenReturn("encodedpassword");
         when(userRepository.save(any(User.class))).thenReturn(testUser);
-        when(jwtService.generateToken(any(UserDetail.class))).thenReturn("testtoken");
+        when(jwtServicesImpl.generateToken(any(UserDetail.class))).thenReturn("testtoken");
 
         // Act
         AuthResponse response = userService.register(authRequest);
@@ -82,7 +82,7 @@ class UserServiceTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
-        when(jwtService.generateToken(any(UserDetail.class))).thenReturn("testtoken");
+        when(jwtServicesImpl.generateToken(any(UserDetail.class))).thenReturn("testtoken");
 
         // Act
         AuthResponse response = userService.authenticate(authRequest);

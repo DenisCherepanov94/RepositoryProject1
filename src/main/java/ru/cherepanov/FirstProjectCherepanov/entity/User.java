@@ -1,22 +1,14 @@
 package ru.cherepanov.FirstProjectCherepanov.entity;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.security.authentication.jaas.JaasGrantedAuthority;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Сущность пользователь
+ */
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,15 +17,23 @@ import java.util.UUID;
 @Builder
 @Table(name = "users")
 public class User {
-
+    /**
+     * Идентификатор пользователя
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-
+    /**
+     * Имя пользователя
+     */
     private String username;
-
+    /**
+     * Пароль пользователя
+     */
     private String password;
-
+    /**
+     * Роль пользователя
+     */
     @Enumerated(EnumType.STRING)
     private Role role;
 

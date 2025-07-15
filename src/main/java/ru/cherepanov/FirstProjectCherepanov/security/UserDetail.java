@@ -1,6 +1,5 @@
 package ru.cherepanov.FirstProjectCherepanov.security;
 
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,13 +8,20 @@ import ru.cherepanov.FirstProjectCherepanov.entity.User;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
+/**
+ * Создаем кастомный класс
+ * имплементирующий UserDetails
+ * для Защиты данных и распределения ролей
+ */
 @RequiredArgsConstructor
 public class UserDetail implements UserDetails {
 
     private final User user;
 
+    /**
+     * Устанвливаем роль пользваотелю
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
@@ -41,11 +47,17 @@ public class UserDetail implements UserDetails {
         return true;
     }
 
+    /**
+     * Получаем имя пользователя
+     */
     @Override
     public String getUsername() {
         return user.getUsername();
     }
 
+    /**
+     * Получаем пароль пользователя
+     */
     @Override
     public String getPassword() {
         return user.getPassword();
